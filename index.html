@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Ilham Ainur Rohman">
+    <title>Login - Buku Tamu</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="node_modules/jquery.growl/stylesheets/jquery.growl.css">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+<body class="container body pt-5">
+    <div class="row">
+        <div class="col-12 offset-md-4 col-md-4 mt-5">
+            <form class="mb-4" id="login-form">
+                <div class="text-center">
+                    <img class="mb-5" src="img/favicon.png" alt="" width="72" height="72">
+                    <h3>Silahkan masuk</h3>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control form-control-lg" placeholder="Username" style="border-radius: 5px 5px 0px 0px;" autofocus="">
+                    <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" style="border-radius: 0px 0px 5px 5px;">
+                </div>
+                <div class="checkbox mb-3 mt-2">
+                    <button class="btn btn-primary float-end" type="submit">Masuk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/gasparesganga-jquery-loading-overlay/dist/loadingoverlay.min.js"></script>
+    <script src="node_modules/jquery.growl/javascripts/jquery.growl.js"></script>
+    <script src="js/const.js"></script>
+    <script>
+        $('#login-form').submit(function(e) {
+            e.preventDefault();
+            $.LoadingOverlay("show");
+            $.ajax({
+                'type' : 'post',
+                'url' : api_url + '/login.php',
+                'data' : $('#login-form').serialize(),
+                'dataType' : 'json',
+            }).done(function(response) {
+                $.LoadingOverlay("hide");
+                if(response.status == '1') {
+                    $.growl.notice({ message: response.data });
+                    window.location.href = "home.html"
+                } else {
+                    $.growl.error({ message: response.data });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

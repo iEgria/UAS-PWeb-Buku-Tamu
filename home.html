@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Tamu</title><link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="node_modules/jquery.growl/stylesheets/jquery.growl.css">
+    <link rel="stylesheet" href="node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-6">
+                <h4>
+                    Buku Tamu
+                </h4>
+            </div>
+            <div class="col-6 d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-sm btn-outline-success text-right" onclick="show_create()">Tambah</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Nama</th>
+                            <th>Keperluan</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="create-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="form-create">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tambah Daftar Tamu</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nama</label>
+                            <input type="text" name="nama" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Keperluan</label>
+                            <input type="text" name="keperluan" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="$('#create-modal').modal('hide')">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/gasparesganga-jquery-loading-overlay/dist/loadingoverlay.min.js"></script>
+    <script src="node_modules/jquery.growl/javascripts/jquery.growl.js"></script>
+    <script src="node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="js/const.js"></script>
+    <script>
+        var table = $('table').DataTable({
+            ajax : api_url + 'buku_tamu/get.php',
+            dataScr : 'data',
+            columns : [
+                {"data" : "tanggal"},
+                {"data" : "nama"},
+                {"data" : "Keperluan"},
+            ]
+        });
+
+        function show_create() {
+            $('#create-modal').modal('show');
+        }
+
+        $('#form-create').submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                type : 'post',
+                url : api_url + 'buku_tamu/store.php',
+                data : $('#form-create').serialize()
+            }).done(function(response) {
+                if(response.status == '1') {
+                    $('#create-modal').modal('hide');
+                    $.growl.notice({ message: response.data });
+                    table.ajax.reload();
+                } else {
+                    $.growl.error({ message: response.data });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
